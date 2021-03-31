@@ -21,8 +21,8 @@ func MakeRouter() *mux.Router {
 	router.HandleFunc("/api/siswa", getSiswas).Methods("GET")
 	router.HandleFunc("/api/siswa/{id}", getSiswa).Methods("GET")
 	router.HandleFunc("/api/siswa", createSiswa).Methods("POST")
-	router.HandleFunc("/api/siswa{id}", updateSiswa).Methods("PUT")
-	router.HandleFunc("/api/siswa{id}", deleteSiswa).Methods("DELETE")
+	router.HandleFunc("/api/siswa/{id}", updateSiswa).Methods("PUT")
+	router.HandleFunc("/api/siswa/{id}", deleteSiswa).Methods("DELETE")
 	return router
 }
 

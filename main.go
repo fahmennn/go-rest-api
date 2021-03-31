@@ -44,7 +44,7 @@ func getSiswa(w http.ResponseWriter, r *http.Request) {
 			panic(err.Error())
 		}
 	}
-	RenderJson(w, siswa)
+	RenderJson(w, &siswa)
 }
 
 func getSiswas(w http.ResponseWriter, r *http.Request) {
@@ -90,13 +90,42 @@ func createSiswa(w http.ResponseWriter, r *http.Request) {
 	}
 	siswa.ID = lastId
 
-	RenderJson(w, siswa)
+	RenderJson(w, &siswa)
 }
 
 func updateSiswa(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var siswa Siswa
+	err := jsonapi.UnmarshalPayload(r.Body, &siswa)
+	if err != nil {
+		panic(err.Error())
+	}
+	query, err := db.Prepare("UPDATE player SET name=?, height=?, weight=? WHERE id=?")
+	if err != nil {
+		panic(err.Error())
+	}
+
+	result, err := query.Exec(siswa.Name, siswa.Height, siswa.Weight, params["id"])
+	if err != nil {
+		panic(err.Error())
+	}
+
+	siswaId, err := result.LastInsertId()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	siswa.ID = siswaId
+
+	RenderJson(w, &siswa)
 
 }
 
 func deleteSiswa(w http.ResponseWriter, r *http.Request) {
-
+	params := mux.Vars(r)
+	_, err := db.Query("DELETE FROM player WHERE id = ?", params["id"])
+	if err != nil {
+		panic(err.Error())
+	}
+	RenderJson(w, params["id"]+"was deleted")
 }
